@@ -15,47 +15,47 @@ public class Board {
     private static final int GAME_BOARD_MAX_ROWS = 3;
     private static final int GAME_BOARD_HGAP = 15;
     private static final int GAME_BOARD_VGAP = 15;
-    private static GridPane grid;
+    private static GridPane gameBoard;
 
     public static GridPane setScene() {
-        grid = new GridPane();
-        grid.setBackground(createBackground());
+        gameBoard = new GridPane();
+        gameBoard.setBackground(createBackground());
 
-        setGameBoardParams();
+        setGameBoardParams(gameBoard);
 
-        return grid;
+        return gameBoard;
     }
 
-    private static void setGameBoardParams() {
-        setGameBoardColumns();
-        setGameBoardRows();
-        fillGameBoard();
-        grid.setPrefSize(GAME_BOARD_PREF_WIDTH, GAME_BOARD_PREF_HEIGHT);
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(GAME_BOARD_HGAP);
-        grid.setVgap(GAME_BOARD_VGAP);
+    private static void setGameBoardParams(GridPane gameBoard) {
+        setGameBoardColumns(gameBoard);
+        setGameBoardRows(gameBoard);
+        fillGameBoard(gameBoard);
+        gameBoard.setPrefSize(GAME_BOARD_PREF_WIDTH, GAME_BOARD_PREF_HEIGHT);
+        gameBoard.setAlignment(Pos.CENTER);
+        gameBoard.setHgap(GAME_BOARD_HGAP);
+        gameBoard.setVgap(GAME_BOARD_VGAP);
     }
 
-    private static void setGameBoardColumns() {
+    private static void setGameBoardColumns(GridPane gameBoard) {
         for (int i = 0; i < GAME_BOARD_MAX_COLUMNS; i++) {
             ColumnConstraints column = new ColumnConstraints(GAME_BOARD_COLUMN_WIDTH);
             column.setHalignment(HPos.CENTER);
-            grid.getColumnConstraints().add(column);
+            gameBoard.getColumnConstraints().add(column);
         }
     }
 
-    private static void setGameBoardRows() {
+    private static void setGameBoardRows(GridPane gameBoard) {
         for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
             RowConstraints row = new RowConstraints(GAME_BOARD_ROW_HEIGHT);
-            grid.getRowConstraints().add(row);
+            gameBoard.getRowConstraints().add(row);
         }
 }
 
 
-    private static void fillGameBoard() {
+    private static void fillGameBoard(GridPane gameBoard) {
         for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
             for (int j = 0; j < GAME_BOARD_MAX_COLUMNS; j++) {
-                grid.add(new FieldView(ImageType.EMPTY), i, j);
+                gameBoard.add(new FieldView(ImageType.EMPTY), i, j);
             }
         }
     }
