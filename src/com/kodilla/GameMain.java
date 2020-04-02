@@ -6,6 +6,8 @@ import javafx.stage.Stage;
 
 public class GameMain extends Application {
 
+    private final static String APP_NAME = "TicTacToe - My First Kodilla Class";
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -15,7 +17,7 @@ public class GameMain extends Application {
 
         Scene scene = new Scene(Board.setScene(), 900, 900);
 
-        primaryStage.setTitle("TicTacToe - My First Kodilla Project");
+        primaryStage.setTitle(APP_NAME);
         primaryStage.setScene(scene);
         primaryStage.show();
 
