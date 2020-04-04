@@ -50,7 +50,7 @@ public class Board {
             gameBoard.getRowConstraints().add(row);
         }
     }
-
+  
 
     private static void fillGameBoard(GridPane gameBoard) {
         for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
