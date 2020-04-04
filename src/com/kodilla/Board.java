@@ -51,7 +51,6 @@ public class Board {
         }
 }
 
-
     private static void fillGameBoard(GridPane gameBoard) {
         for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
             for (int j = 0; j < GAME_BOARD_MAX_COLUMNS; j++) {
@@ -65,8 +64,7 @@ public class Board {
         Image backgroundImage = new Image("file:src/resources/background.jpg");
         BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
         BackgroundImage setBackgroundImage = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(setBackgroundImage);
 
-        return background;
+        return new Background(setBackgroundImage);
     }
 }
