@@ -21,12 +21,10 @@ public class Board {
         gameBoard = new GridPane();
         gameBoard.setBackground(createBackground());
 
-        setGameBoardParams(gameBoard);
-
-        return gameBoard;
+        return setGameBoardParams(gameBoard);
     }
 
-    private static void setGameBoardParams(GridPane gameBoard) {
+    private static GridPane setGameBoardParams(GridPane gameBoard) {
         setGameBoardColumns(gameBoard);
         setGameBoardRows(gameBoard);
         fillGameBoard(gameBoard);
@@ -34,10 +32,12 @@ public class Board {
         gameBoard.setAlignment(Pos.CENTER);
         gameBoard.setHgap(GAME_BOARD_HGAP);
         gameBoard.setVgap(GAME_BOARD_VGAP);
+
+        return gameBoard;
     }
 
     private static void setGameBoardColumns(GridPane gameBoard) {
-        for (int i = 0; i < GAME_BOARD_MAX_COLUMNS; i++) {
+        for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
             ColumnConstraints column = new ColumnConstraints(GAME_BOARD_COLUMN_WIDTH);
             column.setHalignment(HPos.CENTER);
             gameBoard.getColumnConstraints().add(column);
@@ -45,16 +45,16 @@ public class Board {
     }
 
     private static void setGameBoardRows(GridPane gameBoard) {
-        for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
+        for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
             RowConstraints row = new RowConstraints(GAME_BOARD_ROW_HEIGHT);
             gameBoard.getRowConstraints().add(row);
         }
-}
+    }
 
     private static void fillGameBoard(GridPane gameBoard) {
-        for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
-            for (int j = 0; j < GAME_BOARD_MAX_COLUMNS; j++) {
-                gameBoard.add(new FieldView(ImageType.EMPTY), i, j);
+        for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
+                gameBoard.add(new FieldView(ImageType.EMPTY), rowIndex, columnIndex);
             }
         }
     }

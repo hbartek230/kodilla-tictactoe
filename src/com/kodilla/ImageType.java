@@ -10,7 +10,7 @@ public enum ImageType {
         this.imageAdress = imageAdress;
     }
 
-    String getImageAdress(){
+    String getImageAdress() {
         return this.imageAdress;
     }
 }
