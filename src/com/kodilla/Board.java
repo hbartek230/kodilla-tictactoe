@@ -37,7 +37,7 @@ public class Board {
     }
 
     private static void setGameBoardColumns(GridPane gameBoard) {
-        for (int i = 0; i < GAME_BOARD_MAX_COLUMNS; i++) {
+        for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
             ColumnConstraints column = new ColumnConstraints(GAME_BOARD_COLUMN_WIDTH);
             column.setHalignment(HPos.CENTER);
             gameBoard.getColumnConstraints().add(column);
@@ -45,17 +45,17 @@ public class Board {
     }
 
     private static void setGameBoardRows(GridPane gameBoard) {
-        for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
+        for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
             RowConstraints row = new RowConstraints(GAME_BOARD_ROW_HEIGHT);
             gameBoard.getRowConstraints().add(row);
         }
-}
+    }
 
 
     private static void fillGameBoard(GridPane gameBoard) {
-        for (int i = 0; i < GAME_BOARD_MAX_ROWS; i++) {
-            for (int j = 0; j < GAME_BOARD_MAX_COLUMNS; j++) {
-                gameBoard.add(new FieldView(ImageType.EMPTY), i, j);
+        for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
+                gameBoard.add(new FieldView(ImageType.EMPTY), rowIndex, columnIndex);
             }
         }
     }
@@ -65,8 +65,7 @@ public class Board {
         Image backgroundImage = new Image("file:src/resources/background.jpg");
         BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
         BackgroundImage setBackgroundImage = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(setBackgroundImage);
 
-        return background;
+        return new Background(setBackgroundImage);
     }
 }
