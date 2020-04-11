@@ -1,12 +1,18 @@
-package com.kodilla;
+package com.kodilla.ui;
 
+import com.kodilla.controls.GameStatus;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 public class Board {
 
+    private final static String APP_NAME = "TicTacToe - My First Kodilla Class";
+    private final static int SCENE_WIDTH = 900;
+    private final static int SCENE_HEIGHT = 900;
     private static final int GAME_BOARD_COLUMN_WIDTH = 270;
     private static final int GAME_BOARD_ROW_HEIGHT = 270;
     private static final int GAME_BOARD_PREF_WIDTH = 810;
@@ -16,12 +22,19 @@ public class Board {
     private static final int GAME_BOARD_HGAP = 15;
     private static final int GAME_BOARD_VGAP = 15;
     private static GridPane gameBoard;
+    private static GameStatus status;
 
-    public static GridPane setScene() {
+    public static void setScene(Stage primaryStage) {
         gameBoard = new GridPane();
         gameBoard.setBackground(createBackground());
 
-        return setGameBoardParams(gameBoard);
+        status = new GameStatus(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS);
+
+        Scene scene = new Scene(setGameBoardParams(gameBoard), SCENE_WIDTH, SCENE_HEIGHT);
+
+        primaryStage.setTitle(APP_NAME);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     private static GridPane setGameBoardParams(GridPane gameBoard) {
@@ -54,7 +67,9 @@ public class Board {
     private static void fillGameBoard(GridPane gameBoard) {
         for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
             for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
-                gameBoard.add(new FieldView(ImageType.EMPTY), rowIndex, columnIndex);
+                FieldView boardField = new FieldView(ImageType.EMPTY, status);
+                status.setElement(boardField.getImageType(), rowIndex, columnIndex);
+                gameBoard.add(boardField, rowIndex, columnIndex);
             }
         }
     }
