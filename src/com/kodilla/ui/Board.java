@@ -1,5 +1,6 @@
 package com.kodilla.ui;
 
+import com.kodilla.controls.Figure;
 import com.kodilla.controls.GameStatus;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -28,7 +29,7 @@ public class Board {
         gameBoard = new GridPane();
         gameBoard.setBackground(createBackground());
 
-        status = new GameStatus(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS);
+        status = new GameStatus();
 
         Scene scene = new Scene(setGameBoardParams(gameBoard), SCENE_WIDTH, SCENE_HEIGHT);
 
@@ -67,9 +68,8 @@ public class Board {
     private static void fillGameBoard(GridPane gameBoard) {
         for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
             for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
-                FieldView boardField = new FieldView(ImageType.EMPTY, status);
-                status.setElement(boardField.getImageType(), rowIndex, columnIndex);
-                gameBoard.add(boardField, rowIndex, columnIndex);
+                status.addFigure(new Figure(rowIndex, columnIndex, Figure.FigureType.EMPTY));
+                gameBoard.add(new FieldView(ImageType.EMPTY, status), rowIndex, columnIndex);
             }
         }
     }
