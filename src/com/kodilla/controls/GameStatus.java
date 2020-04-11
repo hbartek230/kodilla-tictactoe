@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 public class GameStatus {
 
-    private LinkedList<WinConditions> winConditions;
-    private List<Figure> figures;
     private List<List<Figure>> gameBoard;
 
     public GameStatus() {
@@ -14,14 +12,11 @@ public class GameStatus {
     }
 
     public void addFigure(Figure figure) {
-        this.figures = new ArrayList<>();
-        figures.add(figure);
-        gameBoard.add(figures);
+        gameBoard.add(new ArrayList<>(Collections.singletonList(figure)));
     }
 
     public void mouseClicked(String figureType, int rowClicked, int columnClicked) {
         int index = findIndexOfClickedElement(rowClicked, columnClicked);
-        System.out.println(index);
         setNewElementOnBoard(index, rowClicked, columnClicked, figureType);
     }
 
@@ -38,6 +33,5 @@ public class GameStatus {
     private void setNewElementOnBoard(int index, int rowClicked, int columnClicked, String figureType) {
         Figure newFigure = new Figure(rowClicked, columnClicked, Figure.FigureType.valueOf(figureType));
         gameBoard.set(index, new ArrayList<>(Collections.singletonList(newFigure)));
-        System.out.println(gameBoard);
     }
 }
