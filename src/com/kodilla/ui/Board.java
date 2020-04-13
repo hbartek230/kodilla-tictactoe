@@ -1,7 +1,9 @@
 package com.kodilla.ui;
 
-import com.kodilla.controls.Figure;
-import com.kodilla.controls.GameStatus;
+import com.kodilla.controls.BoardPresenter;
+import com.kodilla.controls.BoardSettings;
+import com.kodilla.controls.FigureType;
+import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,7 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class Board {
+public class Board extends Application {
 
     private final static String APP_NAME = "TicTacToe - My First Kodilla Class";
     private final static String BACKGROUND_ADRESS = "file:src/resources/background.jpg";
@@ -24,28 +26,31 @@ public class Board {
     private static final int GAME_BOARD_MAX_ROWS = 3;
     private static final int GAME_BOARD_HGAP = 15;
     private static final int GAME_BOARD_VGAP = 15;
-    private static GridPane gameBoard;
-    private static GameStatus status;
-    static String computerGameMark;
+    private GridPane gameBoard;
+    private BoardPresenter status;
+    private String computerGameMark;
 
-    public static void setScene(Stage primaryStage) {
-        gameBoard = new GridPane();
-        gameBoard.setBackground(createBackground());
-        computerGameMark = String.valueOf(Figure.FigureType.CIRCLE);
-
-        status = new GameStatus();
-
-        Scene scene = new Scene(setGameBoardParams(gameBoard), SCENE_WIDTH, SCENE_HEIGHT);
-
+    @Override
+    public void start(Stage primaryStage) {
         primaryStage.setTitle(APP_NAME);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(createScene());
         primaryStage.show();
     }
 
-    private static GridPane setGameBoardParams(GridPane gameBoard) {
+    public Scene createScene() {
+        gameBoard = new GridPane();
+        gameBoard.setBackground(createBackground());
+        computerGameMark = String.valueOf(FigureType.CIRCLE);
+
+        status = new BoardPresenter(new BoardSettings(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS));
+
+        return new Scene(setGameBoardParams(gameBoard), SCENE_WIDTH, SCENE_HEIGHT);
+    }
+
+    private GridPane setGameBoardParams(GridPane gameBoard) {
         setGameBoardColumns(gameBoard);
         setGameBoardRows(gameBoard);
-        fillGameBoard(gameBoard);
+        fillGameBoard();
         gameBoard.setPrefSize(GAME_BOARD_PREF_WIDTH, GAME_BOARD_PREF_HEIGHT);
         gameBoard.setAlignment(Pos.CENTER);
         gameBoard.setHgap(GAME_BOARD_HGAP);
@@ -54,7 +59,7 @@ public class Board {
         return gameBoard;
     }
 
-    private static void setGameBoardColumns(GridPane gameBoard) {
+    private void setGameBoardColumns(GridPane gameBoard) {
         for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
             ColumnConstraints column = new ColumnConstraints(GAME_BOARD_COLUMN_WIDTH);
             column.setHalignment(HPos.CENTER);
@@ -62,23 +67,22 @@ public class Board {
         }
     }
 
-    private static void setGameBoardRows(GridPane gameBoard) {
+    private void setGameBoardRows(GridPane gameBoard) {
         for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
             RowConstraints row = new RowConstraints(GAME_BOARD_ROW_HEIGHT);
             gameBoard.getRowConstraints().add(row);
         }
     }
 
-    private static void fillGameBoard(GridPane gameBoard) {
-        for (int rowIndex = 0; rowIndex < GAME_BOARD_MAX_ROWS; rowIndex++) {
-            for (int columnIndex = 0; columnIndex < GAME_BOARD_MAX_COLUMNS; columnIndex++) {
-                status.addFigure(new Figure(rowIndex, columnIndex, Figure.FigureType.EMPTY));
-                gameBoard.add(new FieldView(GameImageType.EMPTY, status), columnIndex, rowIndex);
-            }
-        }
+    private void fillGameBoard() {
+        status.getGameStatus()
+                .forEach(fieldState ->
+                        gameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), status),
+                                fieldState.getColNumber(), fieldState.getRowNumber())
+                );
     }
 
-    public static void setFigureAfterComputerMove(int rowIndex, int columnIndex, int index) {
+    /*public void setFigureAfterComputerMove(int rowIndex, int columnIndex, int index) {
         Node changedNode = null;
         FieldView computerField = new FieldView(GameImageType.valueOf(computerGameMark), status);
         for (Node node : gameBoard.getChildren()) {
@@ -90,9 +94,9 @@ public class Board {
         gameBoard.add(computerField, columnIndex, rowIndex);
 
         status.setNewElementOnBoard(index, rowIndex, columnIndex, computerGameMark);
-    }
+    }*/
 
-    private static Background createBackground() {
+    private Background createBackground() {
         Image backgroundImage = new Image(BACKGROUND_ADRESS);
         BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);
         BackgroundImage setBackgroundImage = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);

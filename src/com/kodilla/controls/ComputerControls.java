@@ -7,11 +7,11 @@ import java.util.Random;
 
 public class ComputerControls {
 
-    public void setComputerFigure(List<Figure> emptyFigures, List<Figure> allFigures) {
-        Figure newFigure = emptyFigures.get(new Random().nextInt(emptyFigures.size()));
-        int index = allFigures.indexOf(newFigure);
+    public void setComputerFigure(List<FieldState> emptyFieldStates, List<FieldState> allFieldStates) {
+        FieldState newFieldState = emptyFieldStates.get(new Random().nextInt(emptyFieldStates.size()));
+        int index = allFieldStates.indexOf(newFieldState);
 
-        Board.setFigureAfterComputerMove(newFigure.getRowNumber(), newFigure.getColNumber(), index);
+        //Board.setFigureAfterComputerMove(newFieldState.getRowNumber(), newFieldState.getColNumber(), index);
     }
 
 }

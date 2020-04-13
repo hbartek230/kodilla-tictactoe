@@ -1,6 +1,7 @@
 package com.kodilla.ui;
 
-import com.kodilla.controls.GameStatus;
+import com.kodilla.controls.BoardPresenter;
+import com.kodilla.controls.Connector;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,18 +13,18 @@ public class FieldView extends ImageView {
     private final static String ALERT_TITLE = "Illegal move";
     private final static String ALERT_TEXT = "You can put a mark only on empty field!";
     GameImageType imageType;
-    GameStatus gameStatus;
+    BoardPresenter boardPresenter;
     Image image;
 
-    public FieldView(GameImageType type, GameStatus status) {
+    public FieldView(GameImageType type, BoardPresenter status) {
         super(new Image(type.getImageAdress()));
         this.imageType = type;
-        this.gameStatus = status;
-        this.setOnMouseClicked((MouseEvent event) -> mouseClicked(imageType, gameStatus));
+        this.boardPresenter = status;
+        this.setOnMouseClicked((MouseEvent event) -> mouseClicked(imageType, boardPresenter));
         this.image = new Image(GameImageType.CROSS.getImageAdress());
     }
 
-    private void mouseClicked(GameImageType type, GameStatus status) {
+    private void mouseClicked(GameImageType type, BoardPresenter status) {
         if (type == GameImageType.EMPTY) {
             this.setImage(image);
             this.imageType = GameImageType.CROSS;
