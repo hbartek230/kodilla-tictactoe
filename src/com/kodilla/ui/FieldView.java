@@ -23,15 +23,11 @@ public class FieldView extends ImageView {
         this.image = new Image(ImageType.CROSS.getImageAdress());
     }
 
-    public ImageType getImageType() {
-        return imageType;
-    }
-
     private void mouseClicked(ImageType type, GameStatus status) {
         if (type == ImageType.EMPTY) {
             this.setImage(image);
             this.imageType = ImageType.CROSS;
-            status.mouseClicked(imageType, GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
+            status.mouseClicked(String.valueOf(imageType), GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
         } else {
             showErrorMessage();
         }
