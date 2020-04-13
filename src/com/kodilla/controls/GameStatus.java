@@ -1,18 +1,17 @@
 package com.kodilla.controls;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameStatus {
 
-    private List<List<Figure>> gameBoard;
+    private List<Figure> gameBoard;
 
     public GameStatus() {
         this.gameBoard = new ArrayList<>();
     }
 
     public void addFigure(Figure figure) {
-        gameBoard.add(new ArrayList<>(Collections.singletonList(figure)));
+        gameBoard.add(figure);
     }
 
     public void mouseClicked(String figureType, int rowClicked, int columnClicked) {
@@ -21,17 +20,17 @@ public class GameStatus {
     }
 
     private int findIndexOfClickedElement(int rowClicked, int columnClicked) {
-        List<Figure> figure = gameBoard.stream()
-                .flatMap(Collection::stream)
+        Figure figure = gameBoard.stream()
                 .filter(r -> r.getRowNumber() == rowClicked)
                 .filter(r -> r.getColNumber() == columnClicked)
-                .collect(Collectors.toList());
+                .findAny()
+                .orElse(null);
 
         return gameBoard.indexOf(figure);
     }
 
     private void setNewElementOnBoard(int index, int rowClicked, int columnClicked, String figureType) {
         Figure newFigure = new Figure(rowClicked, columnClicked, Figure.FigureType.valueOf(figureType));
-        gameBoard.set(index, new ArrayList<>(Collections.singletonList(newFigure)));
+        gameBoard.set(index, newFigure);
     }
 }
