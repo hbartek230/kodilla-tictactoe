@@ -6,19 +6,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BoardPresenter implements Connector{
+public class BoardPresenter implements Connector.Presenter {
 
     private final List<FieldState> gameBoard;
     private final BoardSettings settings;
+    private Board view;
     private ComputerControls computerControl;
 
     public BoardPresenter(BoardSettings settings) {
         this.settings = settings;
         gameBoard = createDefaultField(settings);
-        new Board();
+        new com.kodilla.ui.Board();
     }
 
-    public List<FieldState> getGameStatus(){
+    @Override
+    public void setView(Board view) {
+        this.view = view;
+    }
+
+    public void firstViewOfGameBoard() {
+        view.fillGameBoard(gameBoard);
+    }
+
+    public List<FieldState> getGameStatus() {
         return gameBoard;
     }
 
@@ -34,23 +44,27 @@ public class BoardPresenter implements Connector{
 
     @Override
     public void userMouseClicked(String userMark, int rowClicked, int columnClicked) {
-
-    }
-
-    public void mouseClicked(String figureType, int rowClicked, int columnClicked) {
         computerControl = new ComputerControls();
-        int index = findIndexOfClickedElement(rowClicked, columnClicked);
-        setNewElementOnBoard(index, rowClicked, columnClicked, figureType);
+        prepareGameBoardToShow(userMark, rowClicked, columnClicked);
         makeComputerMove();
     }
 
+    private void prepareGameBoardToShow(String gameMark, int rowClicked, int columnClicked) {
+        int index = findIndexOfClickedElement(rowClicked, columnClicked);
+        List<FieldState> listAfterClicked = setNewElementOnBoard(index, rowClicked, columnClicked, gameMark);
+        view.fillGameBoard(listAfterClicked);
+    }
+
     private void makeComputerMove() {
+        String computerMark = String.valueOf(FigureType.CIRCLE);
+        FieldState computerFieldState;
         List<FieldState> availableFields = gameBoard.stream()
                 .filter(r -> r.getType() == FigureType.EMPTY)
                 .collect(Collectors.toList());
 
         if (availableFields.size() > 1) {
-            computerControl.setComputerFigure(availableFields, gameBoard);
+            computerFieldState = computerControl.selectComputerFigure(availableFields);
+            prepareGameBoardToShow(computerMark, computerFieldState.getRowNumber(), computerFieldState.getColNumber());
         }
     }
 
@@ -63,10 +77,9 @@ public class BoardPresenter implements Connector{
         return gameBoard.indexOf(fieldState);
     }
 
-    public void setNewElementOnBoard(int index, int rowClicked, int columnClicked, String figureType) {
+    public List<FieldState> setNewElementOnBoard(int index, int rowClicked, int columnClicked, String figureType) {
         FieldState newFieldState = new FieldState(rowClicked, columnClicked, FigureType.valueOf(figureType));
         gameBoard.set(index, newFieldState);
+        return gameBoard;
     }
-
-
 }

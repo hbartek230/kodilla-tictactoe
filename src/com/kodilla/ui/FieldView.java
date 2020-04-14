@@ -16,19 +16,18 @@ public class FieldView extends ImageView {
     BoardPresenter boardPresenter;
     Image image;
 
-    public FieldView(GameImageType type, BoardPresenter status) {
+    public FieldView(GameImageType type, BoardPresenter boardPresenter) {
         super(new Image(type.getImageAdress()));
         this.imageType = type;
-        this.boardPresenter = status;
+        this.boardPresenter = boardPresenter;
         this.setOnMouseClicked((MouseEvent event) -> mouseClicked(imageType, boardPresenter));
         this.image = new Image(GameImageType.CROSS.getImageAdress());
     }
 
-    private void mouseClicked(GameImageType type, BoardPresenter status) {
+    private void mouseClicked(GameImageType type, BoardPresenter boardPresenter) {
         if (type == GameImageType.EMPTY) {
-            this.setImage(image);
             this.imageType = GameImageType.CROSS;
-            status.mouseClicked(String.valueOf(imageType), GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
+            boardPresenter.userMouseClicked(String.valueOf(imageType), GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
         } else {
             showErrorMessage();
         }

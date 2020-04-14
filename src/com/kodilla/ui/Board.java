@@ -1,18 +1,17 @@
 package com.kodilla.ui;
 
-import com.kodilla.controls.BoardPresenter;
-import com.kodilla.controls.BoardSettings;
-import com.kodilla.controls.FigureType;
+import com.kodilla.controls.*;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class Board extends Application {
+import java.util.List;
+
+public class Board extends Application implements Connector.Board {
 
     private final static String APP_NAME = "TicTacToe - My First Kodilla Class";
     private final static String BACKGROUND_ADRESS = "file:src/resources/background.jpg";
@@ -26,31 +25,36 @@ public class Board extends Application {
     private static final int GAME_BOARD_MAX_ROWS = 3;
     private static final int GAME_BOARD_HGAP = 15;
     private static final int GAME_BOARD_VGAP = 15;
-    private GridPane gameBoard;
-    private BoardPresenter status;
+    private GridPane viewGameBoard;
+    private BoardPresenter presenter;
     private String computerGameMark;
 
     @Override
     public void start(Stage primaryStage) {
+        createPresenter();
         primaryStage.setTitle(APP_NAME);
         primaryStage.setScene(createScene());
         primaryStage.show();
     }
 
-    public Scene createScene() {
-        gameBoard = new GridPane();
-        gameBoard.setBackground(createBackground());
+    private void createPresenter(){
+        presenter = new BoardPresenter(new BoardSettings(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS));
+        presenter.setView(this);
+    }
+
+    private Scene createScene() {
+        viewGameBoard = new GridPane();
+        viewGameBoard.setBackground(createBackground());
         computerGameMark = String.valueOf(FigureType.CIRCLE);
 
-        status = new BoardPresenter(new BoardSettings(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS));
-
-        return new Scene(setGameBoardParams(gameBoard), SCENE_WIDTH, SCENE_HEIGHT);
+        return new Scene(setGameBoardParams(viewGameBoard), SCENE_WIDTH, SCENE_HEIGHT);
     }
 
     private GridPane setGameBoardParams(GridPane gameBoard) {
         setGameBoardColumns(gameBoard);
         setGameBoardRows(gameBoard);
-        fillGameBoard();
+        presenter.firstViewOfGameBoard();
+
         gameBoard.setPrefSize(GAME_BOARD_PREF_WIDTH, GAME_BOARD_PREF_HEIGHT);
         gameBoard.setAlignment(Pos.CENTER);
         gameBoard.setHgap(GAME_BOARD_HGAP);
@@ -74,12 +78,13 @@ public class Board extends Application {
         }
     }
 
-    private void fillGameBoard() {
-        status.getGameStatus()
-                .forEach(fieldState ->
-                        gameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), status),
-                                fieldState.getColNumber(), fieldState.getRowNumber())
-                );
+    @Override
+    public void fillGameBoard(List<FieldState> gameBoard) {
+        viewGameBoard.getChildren().clear();
+        gameBoard.forEach(fieldState ->
+            viewGameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), presenter),
+                    fieldState.getColNumber(), fieldState.getRowNumber())
+        );
     }
 
     /*public void setFigureAfterComputerMove(int rowIndex, int columnIndex, int index) {
