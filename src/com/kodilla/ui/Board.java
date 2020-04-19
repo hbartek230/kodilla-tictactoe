@@ -87,20 +87,6 @@ public class Board extends Application implements Connector.Board {
         );
     }
 
-    /*public void setFigureAfterComputerMove(int rowIndex, int columnIndex, int index) {
-        Node changedNode = null;
-        FieldView computerField = new FieldView(GameImageType.valueOf(computerGameMark), status);
-        for (Node node : gameBoard.getChildren()) {
-            if (GridPane.getColumnIndex(node) == columnIndex && GridPane.getRowIndex(node) == rowIndex) {
-                changedNode = node;
-            }
-        }
-        gameBoard.getChildren().remove(changedNode);
-        gameBoard.add(computerField, columnIndex, rowIndex);
-
-        status.setNewElementOnBoard(index, rowIndex, columnIndex, computerGameMark);
-    }*/
-
     private Background createBackground() {
         Image backgroundImage = new Image(BACKGROUND_ADRESS);
         BackgroundSize backgroundSize = new BackgroundSize(1.0, 1.0, true, true, false, false);

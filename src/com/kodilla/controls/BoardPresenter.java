@@ -1,6 +1,9 @@
 package com.kodilla.controls;
 
+import com.kodilla.controls.winConditions.ColumnWinChecker;
+import com.kodilla.controls.winConditions.RowWinChecker;
 import com.kodilla.ui.Board;
+import javafx.scene.control.Alert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +15,14 @@ public class BoardPresenter implements Connector.Presenter {
     private final BoardSettings settings;
     private Board view;
     private ComputerControls computerControl;
+    private RowWinChecker rwc;
+    private ColumnWinChecker cwc;
 
     public BoardPresenter(BoardSettings settings) {
         this.settings = settings;
+        this.rwc = new RowWinChecker();
+        this.cwc = new ColumnWinChecker();
         gameBoard = createDefaultField(settings);
-        new com.kodilla.ui.Board();
     }
 
     @Override
@@ -53,6 +59,7 @@ public class BoardPresenter implements Connector.Presenter {
         int index = findIndexOfClickedElement(rowClicked, columnClicked);
         List<FieldState> listAfterClicked = setNewElementOnBoard(index, rowClicked, columnClicked, gameMark);
         view.fillGameBoard(listAfterClicked);
+        winChecker(listAfterClicked, rowClicked, columnClicked, gameMark);
     }
 
     private void makeComputerMove() {
@@ -72,7 +79,9 @@ public class BoardPresenter implements Connector.Presenter {
         FieldState fieldState = gameBoard.stream()
                 .filter(r -> r.getRowNumber() == rowClicked && r.getColNumber() == columnClicked)
                 .findFirst()
-                .orElse(null);
+                .map(fieldState1 ->
+                        new FieldState(fieldState1.getRowNumber(), fieldState1.getColNumber(), fieldState1.getType()))
+                .orElseThrow(NullPointerException::new);
 
         return gameBoard.indexOf(fieldState);
     }
@@ -81,5 +90,21 @@ public class BoardPresenter implements Connector.Presenter {
         FieldState newFieldState = new FieldState(rowClicked, columnClicked, FigureType.valueOf(figureType));
         gameBoard.set(index, newFieldState);
         return gameBoard;
+    }
+
+    private void winChecker(List<FieldState> actualGameBoard, int rowClicked, int columnClicked, String gameMark){
+        if(rwc.checkIfWin(actualGameBoard, rowClicked, columnClicked, gameMark) || cwc.checkIfWin(actualGameBoard, rowClicked, columnClicked, gameMark)) {
+            winMessage();
+        }
+    }
+
+    private void winMessage() {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("You Won");
+            alert.setHeaderText(null);
+            alert.setContentText("You won this game. Do you wanna play again?");
+
+            alert.showAndWait();
+
     }
 }
