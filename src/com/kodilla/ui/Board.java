@@ -1,6 +1,9 @@
 package com.kodilla.ui;
 
-import com.kodilla.controls.*;
+import com.kodilla.controls.BoardPresenter;
+import com.kodilla.controls.BoardSettings;
+import com.kodilla.controls.Connector;
+import com.kodilla.controls.FieldState;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -27,25 +30,23 @@ public class Board extends Application implements Connector.Board {
     private static final int GAME_BOARD_VGAP = 15;
     private GridPane viewGameBoard;
     private BoardPresenter presenter;
-    private String computerGameMark;
 
     @Override
     public void start(Stage primaryStage) {
-        createPresenter();
+        createPresenter(primaryStage);
         primaryStage.setTitle(APP_NAME);
         primaryStage.setScene(createScene());
         primaryStage.show();
     }
 
-    private void createPresenter(){
+    private void createPresenter(Stage primaryStage) {
         presenter = new BoardPresenter(new BoardSettings(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS));
-        presenter.setView(this);
+        presenter.setView(this, primaryStage);
     }
 
     private Scene createScene() {
         viewGameBoard = new GridPane();
         viewGameBoard.setBackground(createBackground());
-        computerGameMark = String.valueOf(FigureType.CIRCLE);
 
         return new Scene(setGameBoardParams(viewGameBoard), SCENE_WIDTH, SCENE_HEIGHT);
     }
@@ -82,8 +83,8 @@ public class Board extends Application implements Connector.Board {
     public void fillGameBoard(List<FieldState> gameBoard) {
         viewGameBoard.getChildren().clear();
         gameBoard.forEach(fieldState ->
-            viewGameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), presenter),
-                    fieldState.getColNumber(), fieldState.getRowNumber())
+                viewGameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), presenter),
+                        fieldState.getColNumber(), fieldState.getRowNumber())
         );
     }
 
