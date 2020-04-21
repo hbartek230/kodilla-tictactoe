@@ -1,7 +1,7 @@
 package com.kodilla.ui;
 
 import com.kodilla.controls.BoardPresenter;
-import com.kodilla.controls.Connector;
+import com.kodilla.controls.clicklistener.UserClickListener;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,22 +12,20 @@ public class FieldView extends ImageView {
 
     private final static String ALERT_TITLE = "Illegal move";
     private final static String ALERT_TEXT = "You can put a mark only on empty field!";
-    GameImageType imageType;
-    BoardPresenter boardPresenter;
-    Image image;
+    private final UserClickListener clickListener;
 
-    public FieldView(GameImageType type, BoardPresenter boardPresenter) {
+    public FieldView(GameImageType type, UserClickListener listener) {
         super(new Image(type.getImageAdress()));
-        this.imageType = type;
-        this.boardPresenter = boardPresenter;
-        this.setOnMouseClicked((MouseEvent event) -> mouseClicked(imageType, boardPresenter));
-        this.image = new Image(GameImageType.CROSS.getImageAdress());
+        this.setOnMouseClicked((MouseEvent event) -> mouseClicked(type));
+        this.clickListener = listener;
     }
 
-    private void mouseClicked(GameImageType type, BoardPresenter boardPresenter) {
+    private void mouseClicked(GameImageType type) {
         if (type == GameImageType.EMPTY) {
-            this.imageType = GameImageType.CROSS;
-            boardPresenter.userMouseClicked(String.valueOf(imageType), GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
+            clickListener.
+                    selectedFieldByUser(
+                            GridPane.getRowIndex(this),
+                            GridPane.getColumnIndex(this));
         } else {
             showErrorMessage();
         }

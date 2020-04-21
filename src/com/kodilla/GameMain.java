@@ -1,12 +1,12 @@
 package com.kodilla;
 
-import com.kodilla.ui.Board;
+import com.kodilla.ui.BoardView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class GameMain extends Application {
 
-    private Board board;
+    private BoardView boardView;
 
     public static void main(String[] args) {
         launch(args);
@@ -14,8 +14,8 @@ public class GameMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        board = new Board();
-        board.start(primaryStage);
+        boardView = new BoardView();
+        boardView.start(primaryStage);
 
     }
 }

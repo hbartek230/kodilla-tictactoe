@@ -4,6 +4,7 @@ import com.kodilla.controls.BoardPresenter;
 import com.kodilla.controls.BoardSettings;
 import com.kodilla.controls.Connector;
 import com.kodilla.controls.FieldState;
+import com.kodilla.controls.clicklistener.UserClickListener;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -14,7 +15,7 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
-public class Board extends Application implements Connector.Board {
+public class BoardView extends Application implements Connector.View, UserClickListener {
 
     private final static String APP_NAME = "TicTacToe - My First Kodilla Class";
     private final static String BACKGROUND_ADRESS = "file:src/resources/background.jpg";
@@ -33,13 +34,13 @@ public class Board extends Application implements Connector.Board {
 
     @Override
     public void start(Stage primaryStage) {
-        createPresenter(primaryStage);
+        bindControls(primaryStage);
         primaryStage.setTitle(APP_NAME);
         primaryStage.setScene(createScene());
         primaryStage.show();
     }
 
-    private void createPresenter(Stage primaryStage) {
+    private void bindControls(Stage primaryStage) {
         presenter = new BoardPresenter(new BoardSettings(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS));
         presenter.setView(this, primaryStage);
     }
@@ -83,7 +84,7 @@ public class Board extends Application implements Connector.Board {
     public void fillGameBoard(List<FieldState> gameBoard) {
         viewGameBoard.getChildren().clear();
         gameBoard.forEach(fieldState ->
-                viewGameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), presenter),
+                viewGameBoard.add(new FieldView(GameImageType.fromFigureType(fieldState.getType()), this),
                         fieldState.getColNumber(), fieldState.getRowNumber())
         );
     }
@@ -94,5 +95,10 @@ public class Board extends Application implements Connector.Board {
         BackgroundImage setBackgroundImage = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
 
         return new Background(setBackgroundImage);
+    }
+
+    @Override
+    public void selectedFieldByUser(int rowClicked, int columnClicked) {
+        presenter.selectedFieldByUser(rowClicked, columnClicked);
     }
 }
