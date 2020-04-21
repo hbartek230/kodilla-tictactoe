@@ -1,18 +1,13 @@
 package com.kodilla.controls;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-public final class Figure {
+public final class FieldState {
     private final int rowNumber;
     private final int colNumber;
     private final FigureType type;
 
-    public enum FigureType {
-        EMPTY, CIRCLE, CROSS
-    }
-
-    public Figure(final int rowNumber, final int colNumber, final FigureType type) {
+    public FieldState(final int rowNumber, final int colNumber, final FigureType type) {
         this.rowNumber = rowNumber;
         this.colNumber = colNumber;
         this.type = type;
@@ -34,15 +29,15 @@ public final class Figure {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Figure figure = (Figure) o;
-        return rowNumber == figure.rowNumber &&
-                colNumber == figure.colNumber &&
-                type == figure.type;
+        FieldState fieldState = (FieldState) o;
+        return rowNumber == fieldState.rowNumber &&
+                colNumber == fieldState.colNumber &&
+                type == fieldState.type;
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return Objects.hashCode(this);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.kodilla.ui;
 
-import com.kodilla.controls.GameStatus;
+import com.kodilla.controls.BoardPresenter;
+import com.kodilla.controls.Connector;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,23 +12,22 @@ public class FieldView extends ImageView {
 
     private final static String ALERT_TITLE = "Illegal move";
     private final static String ALERT_TEXT = "You can put a mark only on empty field!";
-    ImageType imageType;
-    GameStatus gameStatus;
+    GameImageType imageType;
+    BoardPresenter boardPresenter;
     Image image;
 
-    public FieldView(ImageType type, GameStatus status) {
+    public FieldView(GameImageType type, BoardPresenter boardPresenter) {
         super(new Image(type.getImageAdress()));
         this.imageType = type;
-        this.gameStatus = status;
-        this.setOnMouseClicked((MouseEvent event) -> mouseClicked(imageType, gameStatus));
-        this.image = new Image(ImageType.CROSS.getImageAdress());
+        this.boardPresenter = boardPresenter;
+        this.setOnMouseClicked((MouseEvent event) -> mouseClicked(imageType, boardPresenter));
+        this.image = new Image(GameImageType.CROSS.getImageAdress());
     }
 
-    private void mouseClicked(ImageType type, GameStatus status) {
-        if (type == ImageType.EMPTY) {
-            this.setImage(image);
-            this.imageType = ImageType.CROSS;
-            status.mouseClicked(String.valueOf(imageType), GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
+    private void mouseClicked(GameImageType type, BoardPresenter boardPresenter) {
+        if (type == GameImageType.EMPTY) {
+            this.imageType = GameImageType.CROSS;
+            boardPresenter.userMouseClicked(String.valueOf(imageType), GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
         } else {
             showErrorMessage();
         }
