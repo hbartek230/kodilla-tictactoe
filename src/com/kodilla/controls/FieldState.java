@@ -2,7 +2,7 @@ package com.kodilla.controls;
 
 import java.util.Objects;
 
-public final class FieldState {
+public class FieldState {
     private final int rowNumber;
     private final int colNumber;
     private final FigureType type;

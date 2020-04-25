@@ -1,4 +1,4 @@
-package com.kodilla.controls.winconditions;
+package com.kodilla.controls.domain;
 
 import com.kodilla.controls.FieldState;
 

@@ -1,17 +1,17 @@
 package com.kodilla.controls;
 
-import javafx.stage.Stage;
-
 import java.util.List;
 
-public interface Connector {
+public interface BoardContract {
 
     interface Presenter {
-        void setView(View view, Stage primaryStage);
+        void setView(View view);
     }
 
     interface View {
         void fillGameBoard(List<FieldState> gameBoard);
+
+        void showWinMessage();
     }
 
 }

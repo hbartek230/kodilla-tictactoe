@@ -22,10 +22,7 @@ public class FieldView extends ImageView {
 
     private void mouseClicked(GameImageType type) {
         if (type == GameImageType.EMPTY) {
-            clickListener.
-                    selectedFieldByUser(
-                            GridPane.getRowIndex(this),
-                            GridPane.getColumnIndex(this));
+            clickListener.selectedFieldByUser(GridPane.getRowIndex(this), GridPane.getColumnIndex(this));
         } else {
             showErrorMessage();
         }

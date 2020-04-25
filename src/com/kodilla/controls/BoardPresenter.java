@@ -1,74 +1,51 @@
 package com.kodilla.controls;
 
-import com.kodilla.controls.winconditions.ColumnWinChecker;
-import com.kodilla.controls.winconditions.DiagonalWinChecker;
-import com.kodilla.controls.winconditions.RowWinChecker;
-import com.kodilla.controls.winconditions.WinConditionChecker;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.stage.Stage;
+import com.kodilla.controls.domain.WinConditionChecker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class BoardPresenter implements Connector.Presenter {
+public class BoardPresenter implements BoardContract.Presenter {
 
-    private final static String WIN_MESSAGE_TITLE = "You Won";
-    private final static String WIN_MESSAGE_TEXT = "You won this game. Do you wanna play again?";
     private final static String userMark = "CROSS";
-    private final static String computerMark = "CIRCLE";
+
     private final BoardSettings settings;
     private final ComputerControl computerControl;
-    private final List<WinConditionChecker> winChecker;
-    private boolean ifWin;
-    private List<FieldState> gameBoard;
-    private List<FieldState> availableFields;
-    private Connector.View view;
-    private Stage primaryStage;
+    private final WinConditionChecker checker;
 
-    public BoardPresenter(BoardSettings settings) {
+    private List<FieldState> actualFieldStateList;
+    private List<FieldState> availableFields;
+    private BoardContract.View view;
+
+    public BoardPresenter(BoardSettings settings, WinConditionChecker checker) {
         this.settings = settings;
-        this.winChecker = createWinCheckerConditions();
+        this.checker = checker;
         computerControl = new ComputerControl();
     }
 
     @Override
-    public void setView(Connector.View view, Stage primaryStage) {
+    public void setView(BoardContract.View view) {
         this.view = view;
-        this.primaryStage = primaryStage;
-        prepareGameBoardToShow();
+        prepareBoardToNewGame();
     }
 
-    public void prepareGameBoardToShow(){
-        gameBoard = createDefaultField(settings);
+    public void prepareBoardToNewGame() {
+        actualFieldStateList = createDefaultField(settings);
         availableFields = createDefaultField(settings);
+        whoseMove(WhoseTurn.USER);
+        view.fillGameBoard(actualFieldStateList);
     }
 
-    public void firstViewOfGameBoard() {
-        view.fillGameBoard(gameBoard);
-    }
-
-    public List<FieldState> getGameStatus() {
-        return gameBoard;
-    }
-
-    public void selectedFieldByUser(int rowClicked, int columnClicked) {
-        FieldState selectedByUser = new FieldState(rowClicked, columnClicked, FigureType.valueOf(userMark));
-
-        prepareGameBoardToShow(selectedByUser);
-        if (!ifWin) {
+    public void whoseMove(WhoseTurn turn) {
+        if (turn == WhoseTurn.COMPUTER) {
             makeComputerMove();
         }
     }
 
-    private List<WinConditionChecker> createWinCheckerConditions() {
-        List<WinConditionChecker> conditionList = new ArrayList<>();
-        conditionList.add(new RowWinChecker());
-        conditionList.add(new ColumnWinChecker());
-        conditionList.add(new DiagonalWinChecker());
-
-        return conditionList;
+    public void selectedFieldByUser(int rowClicked, int columnClicked) {
+        FieldState selectedByUser = new FieldState(rowClicked, columnClicked, FigureType.valueOf(userMark));
+        prepareGameBoardToShow(selectedByUser);
+        checkIfGameIsWin(actualFieldStateList, selectedByUser, WhoseTurn.COMPUTER);
     }
 
     private List<FieldState> createDefaultField(BoardSettings settings) {
@@ -83,71 +60,46 @@ public class BoardPresenter implements Connector.Presenter {
 
     private void prepareGameBoardToShow(FieldState changedField) {
         int index = findIndexOfClickedElement(changedField.getRowNumber(), changedField.getColNumber());
-        List<FieldState> listAfterClicked = setNewElementOnBoard(index, changedField);
-
-        if (availableFields.size() > 1){
-            removeClickedElementFromAvailableList(changedField);
-
-        }
-        view.fillGameBoard(listAfterClicked);
-        ifWin = winChecker(listAfterClicked, changedField);
-        if (ifWin) {
-            showWinMessage();
-        }
+        replaceNewElementOnBoard(index, changedField);
+        removeClickedElementFromAvailableList(changedField);
+        view.fillGameBoard(actualFieldStateList);
     }
 
-    private void removeClickedElementFromAvailableList(FieldState changedField){
+    private void removeClickedElementFromAvailableList(FieldState changedField) {
         changedField = new FieldState(changedField.getRowNumber(), changedField.getColNumber(), FigureType.EMPTY);
-        availableFields.remove(changedField);
-    }
-
-    private void makeComputerMove() {
-        FieldState computerFieldState;
-
         if (availableFields.size() > 1) {
-            computerFieldState = computerControl.selectComputerFigure(availableFields);
-            int computerFigureRow = computerFieldState.getRowNumber();
-            int computerFigureColumn = computerFieldState.getColNumber();
-
-            prepareGameBoardToShow(new FieldState(computerFigureRow, computerFigureColumn, FigureType.valueOf(computerMark)));
+            availableFields.remove(changedField);
         }
     }
 
     private int findIndexOfClickedElement(int rowClicked, int columnClicked) {
-        FieldState clickedFieldState = gameBoard.stream()
-                .filter(fieldState -> fieldState.getRowNumber() == rowClicked && fieldState.getColNumber() == columnClicked)
+        return actualFieldStateList.stream()
+                .filter(fieldState ->
+                        fieldState.getRowNumber() == rowClicked && fieldState.getColNumber() == columnClicked)
                 .findFirst()
-                .map(fieldState1 ->
-                        new FieldState(fieldState1.getRowNumber(), fieldState1.getColNumber(), fieldState1.getType()))
+                .map(fieldState -> actualFieldStateList.indexOf(fieldState))
                 .orElseThrow(NullPointerException::new);
-
-        return gameBoard.indexOf(clickedFieldState);
     }
 
-    private List<FieldState> setNewElementOnBoard(int index, FieldState changedField) {
-        gameBoard.set(index, new FieldState(
+    private void replaceNewElementOnBoard(int index, FieldState changedField) {
+        actualFieldStateList.set(index, new FieldState(
                 changedField.getRowNumber(), changedField.getColNumber(), changedField.getType())
         );
-        return gameBoard;
     }
 
-    private boolean winChecker(List<FieldState> actualGameBoard, FieldState changedField) {
-        return winChecker.stream()
-                .anyMatch(checker -> checker.checkIfWin(actualGameBoard, changedField)
-                );
+    private void makeComputerMove() {
+        if (availableFields.size() > 1) {
+            FieldState computerSelectedField = computerControl.selectComputerFigure(availableFields);
+            prepareGameBoardToShow(computerSelectedField);
+            checkIfGameIsWin(actualFieldStateList, computerSelectedField, WhoseTurn.USER);
+        }
     }
 
-    private void showWinMessage() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(WIN_MESSAGE_TITLE);
-        alert.setHeaderText(null);
-        alert.setContentText(WIN_MESSAGE_TEXT);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            firstViewOfGameBoard();
+    private void checkIfGameIsWin(List<FieldState> actualFieldStateList, FieldState changedField, WhoseTurn turn) {
+        if (checker.checkIfWin(actualFieldStateList, changedField)) {
+            view.showWinMessage();
         } else {
-            primaryStage.close();
+            whoseMove(turn);
         }
     }
 }
