@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class BoardPresenter implements Connector.Presenter {
 
@@ -30,20 +29,23 @@ public class BoardPresenter implements Connector.Presenter {
 
     public BoardPresenter(BoardSettings settings) {
         this.settings = settings;
-        this.winChecker = new ArrayList<>();
+        this.winChecker = createWinCheckerConditions();
         computerControl = new ComputerControl();
-        createWinCheckerConditions(winChecker);
     }
 
     @Override
     public void setView(Connector.View view, Stage primaryStage) {
         this.view = view;
         this.primaryStage = primaryStage;
+        prepareGameBoardToShow();
+    }
+
+    public void prepareGameBoardToShow(){
+        gameBoard = createDefaultField(settings);
+        availableFields = createDefaultField(settings);
     }
 
     public void firstViewOfGameBoard() {
-        gameBoard = createDefaultField(settings);
-        availableFields = createDefaultField(settings);
         view.fillGameBoard(gameBoard);
     }
 
@@ -60,10 +62,13 @@ public class BoardPresenter implements Connector.Presenter {
         }
     }
 
-    private void createWinCheckerConditions(List<WinConditionChecker> winChecker) {
-        winChecker.add(new RowWinChecker());
-        winChecker.add(new ColumnWinChecker());
-        winChecker.add(new DiagonalWinChecker());
+    private List<WinConditionChecker> createWinCheckerConditions() {
+        List<WinConditionChecker> conditionList = new ArrayList<>();
+        conditionList.add(new RowWinChecker());
+        conditionList.add(new ColumnWinChecker());
+        conditionList.add(new DiagonalWinChecker());
+
+        return conditionList;
     }
 
     private List<FieldState> createDefaultField(BoardSettings settings) {
