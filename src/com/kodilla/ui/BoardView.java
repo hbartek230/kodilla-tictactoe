@@ -1,9 +1,6 @@
 package com.kodilla.ui;
 
-import com.kodilla.controls.BoardContract;
-import com.kodilla.controls.BoardPresenter;
-import com.kodilla.controls.BoardSettings;
-import com.kodilla.controls.FieldState;
+import com.kodilla.controls.*;
 import com.kodilla.controls.clicklistener.UserClickListener;
 import com.kodilla.controls.data.winconditions.AdvancedWinChecker;
 import com.kodilla.controls.data.winconditions.ColumnWinChecker;
@@ -41,7 +38,7 @@ public class BoardView extends Application implements BoardContract.View, UserCl
     private static final int GAME_BOARD_VGAP = 15;
 
     private GridPane viewGameBoard;
-    private BoardPresenter presenter;
+    private BoardContract.Presenter presenter;
     private Stage myStage;
 
     @Override
@@ -55,7 +52,7 @@ public class BoardView extends Application implements BoardContract.View, UserCl
 
     private void bindControls() {
         presenter = new BoardPresenter(new BoardSettings(GAME_BOARD_MAX_ROWS, GAME_BOARD_MAX_COLUMNS),
-                prepareWinConditions());
+                prepareWinConditions(), new ComputerControl());
         presenter.setView(this);
     }
 
@@ -130,7 +127,7 @@ public class BoardView extends Application implements BoardContract.View, UserCl
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            presenter.createNewGame();
+            presenter.restartGame();
         } else {
             myStage.close();
         }

@@ -6,6 +6,10 @@ public interface BoardContract {
 
     interface Presenter {
         void setView(View view);
+
+        void selectedFieldByUser(int rowClicked, int columnClicked);
+
+        void restartGame();
     }
 
     interface View {

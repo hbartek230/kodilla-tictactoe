@@ -18,10 +18,10 @@ public class BoardPresenter implements BoardContract.Presenter {
     private BoardContract.View view;
     private WhoseTurn whoseTurn;
 
-    public BoardPresenter(BoardSettings settings, WinConditionChecker checker) {
+    public BoardPresenter(BoardSettings settings, WinConditionChecker checker, ComputerControl computerControl) {
         this.settings = settings;
         this.checker = checker;
-        computerControl = new ComputerControl();
+        this.computerControl = computerControl;
     }
 
     @Override
@@ -30,7 +30,12 @@ public class BoardPresenter implements BoardContract.Presenter {
         createNewGame();
     }
 
-    public void createNewGame() {
+    @Override
+    public void restartGame() {
+        createNewGame();
+    }
+
+    private void createNewGame() {
         actualFieldStateList = createDefaultField(settings);
         availableFields = createDefaultField(settings);
         whoseTurn = WhoseTurn.USER;
@@ -67,7 +72,7 @@ public class BoardPresenter implements BoardContract.Presenter {
         makeMove(computerSelectedField);
     }
 
-
+    @Override
     public void selectedFieldByUser(int rowClicked, int columnClicked) {
         FieldState selectedByUser = new FieldState(rowClicked, columnClicked, FigureType.valueOf(userMark));
         makeMove(selectedByUser);
@@ -101,9 +106,7 @@ public class BoardPresenter implements BoardContract.Presenter {
     }
 
     private void replaceNewElementOnBoard(int index, FieldState changedField) {
-        actualFieldStateList.set(index, new FieldState(
-                changedField.getRowNumber(), changedField.getColNumber(), changedField.getType())
-        );
+        actualFieldStateList.set(index, changedField);
     }
 
     private void removeClickedElementFromAvailableList(FieldState changedField) {
@@ -122,4 +125,6 @@ public class BoardPresenter implements BoardContract.Presenter {
             whoseTurn = WhoseTurn.USER;
         }
     }
+
+
 }
