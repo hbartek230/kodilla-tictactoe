@@ -11,7 +11,11 @@ public interface BoardContract {
     interface View {
         void fillGameBoard(List<FieldState> gameBoard);
 
-        void showWinMessage();
+        void showWinMessage(String winner);
+
+        void showInfoAboutUserMove();
+
+        void showInfoAboutComputerMove();
     }
 
 }

@@ -28,7 +28,7 @@ public class BoardView extends Application implements BoardContract.View, UserCl
     private static final String APP_NAME = "TicTacToe - My First Kodilla Class";
     private static final String BACKGROUND_ADRESS = "file:src/resources/background.jpg";
     private static final String WIN_MESSAGE_TITLE = "You Won";
-    private static final String WIN_MESSAGE_TEXT = "You won this game. Do you wanna play again?";
+    private static final String WIN_MESSAGE_TEXT = " won this game. Do you wanna play again?";
     private static final int SCENE_WIDTH = 900;
     private static final int SCENE_HEIGHT = 900;
     private static final int GAME_BOARD_COLUMN_WIDTH = 270;
@@ -122,17 +122,27 @@ public class BoardView extends Application implements BoardContract.View, UserCl
     }
 
     @Override
-    public void showWinMessage() {
+    public void showWinMessage(String winner) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(WIN_MESSAGE_TITLE);
         alert.setHeaderText(null);
-        alert.setContentText(WIN_MESSAGE_TEXT);
+        alert.setContentText(winner + WIN_MESSAGE_TEXT);
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            presenter.prepareBoardToNewGame();
+            presenter.createNewGame();
         } else {
             myStage.close();
         }
+    }
+
+    @Override
+    public void showInfoAboutUserMove() {
+        System.out.println("This is user move");
+    }
+
+    @Override
+    public void showInfoAboutComputerMove() {
+        System.out.println("This is computer move");
     }
 }

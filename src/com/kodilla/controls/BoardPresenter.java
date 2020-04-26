@@ -16,6 +16,7 @@ public class BoardPresenter implements BoardContract.Presenter {
     private List<FieldState> actualFieldStateList;
     private List<FieldState> availableFields;
     private BoardContract.View view;
+    private WhoseTurn whoseTurn;
 
     public BoardPresenter(BoardSettings settings, WinConditionChecker checker) {
         this.settings = settings;
@@ -26,26 +27,15 @@ public class BoardPresenter implements BoardContract.Presenter {
     @Override
     public void setView(BoardContract.View view) {
         this.view = view;
-        prepareBoardToNewGame();
+        createNewGame();
     }
 
-    public void prepareBoardToNewGame() {
+    public void createNewGame() {
         actualFieldStateList = createDefaultField(settings);
         availableFields = createDefaultField(settings);
-        whoseMove(WhoseTurn.USER);
-        view.fillGameBoard(actualFieldStateList);
-    }
+        whoseTurn = WhoseTurn.USER;
 
-    public void whoseMove(WhoseTurn turn) {
-        if (turn == WhoseTurn.COMPUTER) {
-            makeComputerMove();
-        }
-    }
-
-    public void selectedFieldByUser(int rowClicked, int columnClicked) {
-        FieldState selectedByUser = new FieldState(rowClicked, columnClicked, FigureType.valueOf(userMark));
-        prepareGameBoardToShow(selectedByUser);
-        checkIfGameIsWin(actualFieldStateList, selectedByUser, WhoseTurn.COMPUTER);
+        startNewGame();
     }
 
     private List<FieldState> createDefaultField(BoardSettings settings) {
@@ -58,18 +48,47 @@ public class BoardPresenter implements BoardContract.Presenter {
         return defaultFields;
     }
 
-    private void prepareGameBoardToShow(FieldState changedField) {
+    private void startNewGame() {
+        view.fillGameBoard(actualFieldStateList);
+        makeNextMove();
+    }
+
+    private void makeNextMove() {
+        if (whoseTurn == WhoseTurn.USER) {
+            view.showInfoAboutUserMove();
+        } else {
+            view.showInfoAboutComputerMove();
+            selectComputerField();
+        }
+    }
+
+    private void selectComputerField() {
+        FieldState computerSelectedField = computerControl.selectComputerFigure(availableFields);
+        makeMove(computerSelectedField);
+    }
+
+
+    public void selectedFieldByUser(int rowClicked, int columnClicked) {
+        FieldState selectedByUser = new FieldState(rowClicked, columnClicked, FigureType.valueOf(userMark));
+        makeMove(selectedByUser);
+    }
+
+    private void makeMove(FieldState selectedField) {
+        updateGameBoard(selectedField);
+        boolean isWin = checker.checkIfWin(actualFieldStateList, selectedField);
+        if (!isWin) {
+            changePlayer();
+            makeNextMove();
+        } else {
+            view.showWinMessage(String.valueOf(selectedField.getType()));
+        }
+    }
+
+    private void updateGameBoard(FieldState changedField) {
         int index = findIndexOfClickedElement(changedField.getRowNumber(), changedField.getColNumber());
         replaceNewElementOnBoard(index, changedField);
         removeClickedElementFromAvailableList(changedField);
         view.fillGameBoard(actualFieldStateList);
-    }
-
-    private void removeClickedElementFromAvailableList(FieldState changedField) {
-        changedField = new FieldState(changedField.getRowNumber(), changedField.getColNumber(), FigureType.EMPTY);
-        if (availableFields.size() > 1) {
-            availableFields.remove(changedField);
-        }
     }
 
     private int findIndexOfClickedElement(int rowClicked, int columnClicked) {
@@ -87,19 +106,20 @@ public class BoardPresenter implements BoardContract.Presenter {
         );
     }
 
-    private void makeComputerMove() {
+    private void removeClickedElementFromAvailableList(FieldState changedField) {
+        changedField = new FieldState(changedField.getRowNumber(), changedField.getColNumber(), FigureType.EMPTY);
         if (availableFields.size() > 1) {
-            FieldState computerSelectedField = computerControl.selectComputerFigure(availableFields);
-            prepareGameBoardToShow(computerSelectedField);
-            checkIfGameIsWin(actualFieldStateList, computerSelectedField, WhoseTurn.USER);
+            availableFields.remove(changedField);
+        } else {
+            throw new IllegalArgumentException("Can`t remove");
         }
     }
 
-    private void checkIfGameIsWin(List<FieldState> actualFieldStateList, FieldState changedField, WhoseTurn turn) {
-        if (checker.checkIfWin(actualFieldStateList, changedField)) {
-            view.showWinMessage();
+    private void changePlayer() {
+        if (whoseTurn == WhoseTurn.USER) {
+            whoseTurn = WhoseTurn.COMPUTER;
         } else {
-            whoseMove(turn);
+            whoseTurn = WhoseTurn.USER;
         }
     }
 }
