@@ -1,7 +1,8 @@
-package com.kodilla.controls.winconditions;
+package com.kodilla.controls.data.winconditions;
 
 import com.kodilla.controls.FieldState;
 import com.kodilla.controls.FigureType;
+import com.kodilla.controls.domain.WinConditionChecker;
 
 import java.util.Comparator;
 import java.util.List;
@@ -11,6 +12,9 @@ public class DiagonalWinChecker implements WinConditionChecker {
 
     @Override
     public boolean checkIfWin(List<FieldState> actualGameBoard, FieldState changedField) {
+        if (actualGameBoard.isEmpty()) {
+            throw new IllegalArgumentException("actualGameBoard can`t be empty");
+        }
         int maxIndex = findMaxRowIndex(actualGameBoard);
 
         return checkDiagonal(actualGameBoard, changedField.getType()) ||

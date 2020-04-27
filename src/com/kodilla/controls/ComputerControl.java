@@ -5,8 +5,13 @@ import java.util.Random;
 
 public class ComputerControl {
 
+    private final static String computerMark = "CIRCLE";
+
     public FieldState selectComputerFigure(List<FieldState> emptyFieldStates) {
-        return emptyFieldStates.get(new Random().nextInt(emptyFieldStates.size()));
+        FieldState computerField = emptyFieldStates.get(new Random().nextInt(emptyFieldStates.size()));
+
+        return new FieldState(computerField.getRowNumber(), computerField.getColNumber(),
+                FigureType.valueOf(computerMark));
     }
 
 }
